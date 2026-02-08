@@ -56,6 +56,11 @@
     position: relative;
   }
 
+ .chaos-buttons {
+  flex-direction: column;
+}
+
+
   button {
     flex: 1;
     padding: 14px;
@@ -121,10 +126,11 @@
 <!-- CHAOS MODE -->
 <div class="container" id="chaosScreen" style="display:none;">
   <h1 id="chaosQuestion">Rutuja, will you be my Valentine? 😈💖</h1>
-  <div class="buttons" id="chaosButtons">
-    <button class="yes" id="chaosYes">Yes 💘</button>
-    <button class="no" id="chaosNo">No 🙄</button>
-  </div>
+<div class="buttons chaos-buttons" id="chaosButtons">
+  <button class="yes" id="chaosYes">Yes 💘</button>
+  <button class="no" id="chaosNo">No 🙄</button>
+</div>
+
 </div>
 
 <script>
