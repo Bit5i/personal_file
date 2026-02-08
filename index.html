@@ -2,13 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Valentine?</title>
 
 <style>
   * {
     box-sizing: border-box;
     font-family: "Comic Sans MS", "Poppins", sans-serif;
+  }
+
+  html, body {
+    overscroll-behavior: none;
+    touch-action: manipulation;
   }
 
   body {
@@ -48,6 +53,7 @@
   .buttons {
     display: flex;
     gap: 15px;
+    position: relative;
   }
 
   button {
@@ -60,12 +66,12 @@
     transition: all 0.3s ease;
   }
 
-  #yesBtn {
+  .yes {
     background: #ff4d6d;
     color: white;
   }
 
-  #noBtn {
+  .no {
     background: #ccc;
     color: #333;
   }
@@ -79,108 +85,156 @@
   }
 
   @keyframes floatUp {
-    0% {
-      transform: translateY(0) scale(1);
-      opacity: 0;
-    }
+    0% { transform: translateY(0) scale(1); opacity: 0; }
     10% { opacity: 1; }
-    100% {
-      transform: translateY(-120vh) scale(1.4);
-      opacity: 0;
-    }
+    100% { transform: translateY(-120vh) scale(1.4); opacity: 0; }
   }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<audio id="bgMusic" loop>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
 
-  <!-- IMAGE SLOT -->
-  <img id="reactionImage" alt="reaction image" />
-
-  <h1 id="question">
-Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖  </h1>
+<!-- HOME SCREEN -->
+<div class="container" id="homeScreen">
+  <h1>Choose your proposal experience 😌</h1>
+  <p style="font-size:0.9rem;">🔊 Please turn up the volume</p>
 
   <div class="buttons">
-    <button id="yesBtn">Yes 💘</button>
-    <button id="noBtn">No 🙄</button>
+    <button class="yes" onclick="startSoft()">💖 Soft Proposal</button>
+    <button class="no" onclick="startChaos()">😈 Chaos Proposal</button>
+  </div>
+</div>
+
+<!-- SOFT PROPOSAL -->
+<div class="container" id="softScreen" style="display:none;">
+  <img id="softImage" />
+  <h1 id="softQuestion">
+    Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖
+  </h1>
+
+  <div class="buttons">
+    <button class="yes" id="softYes">Yes 💘</button>
+    <button class="no" id="softNo">No 🙄</button>
+  </div>
+</div>
+
+<!-- CHAOS PROPOSAL -->
+<div class="container" id="chaosScreen" style="display:none;">
+  <h1>Rutuja, will you be my Valentine? 😈💖</h1>
+
+  <div class="buttons" style="height:60px;">
+    <button class="yes" id="chaosYes">Yes 💘</button>
+    <button class="no" id="chaosNo" style="position:absolute;">No 🙄</button>
   </div>
 </div>
 
 <script>
-  const noBtn = document.getElementById("noBtn");
-  const yesBtn = document.getElementById("yesBtn");
-  const question = document.getElementById("question");
-  const img = document.getElementById("reactionImage");
+/* ELEMENT REFERENCES */
+const homeScreen = document.getElementById("homeScreen");
+const softScreen = document.getElementById("softScreen");
+const chaosScreen = document.getElementById("chaosScreen");
 
-  // 🔗 ADD YOUR GOOGLE DRIVE IMAGE LINKS HERE
-const noImage = "no.png";
-const yesImage = "yes.png";
+const softNo = document.getElementById("softNo");
+const softYes = document.getElementById("softYes");
+const softImage = document.getElementById("softImage");
+const softQuestion = document.getElementById("softQuestion");
 
-  const noTexts = [
-    "Are you sure? 🤨",
-    "Like… REALLY sure? 😐",
-    "Pccchhhhhh 😭",
-    "Huhhhhhh 😤",
-    "Last chance 😢",
-    "Okay this button is exhausted 😮‍💨"
-  ];
+const chaosYes = document.getElementById("chaosYes");
+const chaosNo = document.getElementById("chaosNo");
 
-  let noClickCount = 0;
+const music = document.getElementById("bgMusic");
 
-  noBtn.addEventListener("click", () => {
-    if (noClickCount === 0) {
-      img.src = noImage;
-      img.style.display = "block";
-    }
+/* MUSIC — start immediately after first interaction */
+let musicStarted = false;
+function startMusic() {
+  if (musicStarted) return;
+  musicStarted = true;
+  music.play().catch(() => {});
+}
 
-    if (noClickCount < noTexts.length) {
-      question.textContent = noTexts[noClickCount];
-      noClickCount++;
+/* NAVIGATION */
+function startSoft() {
+  startMusic();
+  homeScreen.style.display = "none";
+  softScreen.style.display = "block";
+}
 
-      yesBtn.style.transform = `scale(${1 + noClickCount * 0.15})`;
-      noBtn.style.transform = `scale(${1 - noClickCount * 0.1})`;
-    }
+function startChaos() {
+  startMusic();
+  homeScreen.style.display = "none";
+  chaosScreen.style.display = "block";
+}
 
-    if (noClickCount >= noTexts.length) {
-      noBtn.style.display = "none";
-      question.textContent = "Yeah… you don’t really have a choice 😌💗";
-    }
-  });
+/* SOFT MODE LOGIC — 4 NO IMAGES */
+const noImages = ["no.png", "no1.png", "no2.png", "no3.png"];
+let noCount = 0;
 
-  yesBtn.addEventListener("click", () => {
-    img.src = yesImage;
-    img.style.display = "block";
+softNo.addEventListener("click", () => {
+  const index = Math.min(noCount, noImages.length - 1);
+  softImage.src = noImages[index];
+  softImage.style.display = "block";
+  noCount++;
+});
 
-    question.innerHTML = `
-      YAYYYY 😍💞<br><br>
-      You just made me the happiest person 💐<br><br>
-      <strong>PS - I made this website myself!!!! 😤💻</strong><br>
-      Now enjoy your trip 🌍✈️
+softYes.addEventListener("click", () => {
+  if (noCount === 0) {
+    softQuestion.innerHTML = `
+      Start la bhaav nahi khalis aata tri bhaav khaa 😌<br><br>
+      <button onclick="goBack()">Back to main question</button>
     `;
-
-    noBtn.style.display = "none";
-    yesBtn.style.display = "none";
-  });
-
-  function createFloat() {
-    const item = document.createElement("div");
-    item.classList.add("float");
-
-    const emojis = ["💖", "🌻"];
-    item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-    item.style.left = Math.random() * 100 + "vw";
-    item.style.animationDuration = Math.random() * 3 + 4 + "s";
-    item.style.fontSize = Math.random() * 18 + 16 + "px";
-
-    document.body.appendChild(item);
-
-    setTimeout(() => item.remove(), 8000);
+    return;
   }
 
-  setInterval(createFloat, 250);
+  softImage.src = "yes.png";
+  softImage.style.display = "block";
+  celebrate();
+});
+
+/* CHAOS MODE */
+chaosNo.addEventListener("mouseenter", moveNo);
+chaosNo.addEventListener("click", moveNo);
+
+function moveNo() {
+  chaosNo.style.left = Math.random() * 60 + "%";
+  chaosNo.style.top = Math.random() * 40 + "px";
+}
+
+chaosYes.addEventListener("click", () => {
+  startMusic();
+  celebrate();
+});
+
+/* BACK TO HOME */
+function goBack() {
+  noCount = 0;
+  softImage.style.display = "none";
+  softQuestion.innerHTML =
+    "Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖";
+  softScreen.style.display = "none";
+  homeScreen.style.display = "block";
+}
+
+/* CONFETTI + FLOATING HEARTS & SUNFLOWERS */
+function createFloat(crazy = false) {
+  const item = document.createElement("div");
+  item.classList.add("float");
+  item.textContent = ["💖", "🌻", "🎉"][Math.floor(Math.random() * 3)];
+  item.style.left = Math.random() * 100 + "vw";
+  item.style.animationDuration = crazy ? "2s" : "6s";
+  item.style.fontSize = crazy ? "30px" : "18px";
+  document.body.appendChild(item);
+  setTimeout(() => item.remove(), 4000);
+}
+
+function celebrate() {
+  for (let i = 0; i < 120; i++) createFloat(true);
+}
+
+setInterval(() => createFloat(false), 400);
 </script>
 
 </body>
