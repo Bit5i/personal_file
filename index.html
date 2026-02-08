@@ -63,7 +63,7 @@
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.25s ease;
   }
 
   .yes {
@@ -98,48 +98,45 @@
   <source src="song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- HOME SCREEN -->
+<!-- HOME -->
 <div class="container" id="homeScreen">
   <h1>Choose your proposal experience 😌</h1>
   <p style="font-size:0.9rem;">🔊 Please turn up the volume</p>
-
   <div class="buttons">
     <button class="yes" onclick="startSoft()">💖 Soft Proposal</button>
     <button class="no" onclick="startChaos()">😈 Chaos Proposal</button>
   </div>
 </div>
 
-<!-- SOFT PROPOSAL -->
+<!-- SOFT MODE -->
 <div class="container" id="softScreen" style="display:none;">
   <img id="softImage" />
   <h1 id="softQuestion">
     Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖
   </h1>
-
   <div class="buttons">
     <button class="yes" id="softYes">Yes 💘</button>
     <button class="no" id="softNo">No 🙄</button>
   </div>
 </div>
 
-<!-- CHAOS PROPOSAL -->
+<!-- CHAOS MODE -->
 <div class="container" id="chaosScreen" style="display:none;">
   <h1>Rutuja, will you be my Valentine? 😈💖</h1>
-
-  <div class="buttons" style="height:60px;">
+  <div class="buttons">
     <button class="yes" id="chaosYes">Yes 💘</button>
-    <button class="no" id="chaosNo" style="position:absolute;">No 🙄</button>
+    <button class="no" id="chaosNo">No 🙄</button>
   </div>
 </div>
 
 <script>
-/* ELEMENT REFERENCES */
+/* ELEMENTS */
 const homeScreen = document.getElementById("homeScreen");
 const softScreen = document.getElementById("softScreen");
 const chaosScreen = document.getElementById("chaosScreen");
 
-const softNo = document.getElementById("softNo");
 const softYes = document.getElementById("softYes");
+const softNo = document.getElementById("softNo");
 const softImage = document.getElementById("softImage");
 const softQuestion = document.getElementById("softQuestion");
 
@@ -148,7 +145,7 @@ const chaosNo = document.getElementById("chaosNo");
 
 const music = document.getElementById("bgMusic");
 
-/* MUSIC — start immediately after first interaction */
+/* MUSIC */
 let musicStarted = false;
 function startMusic() {
   if (musicStarted) return;
@@ -156,7 +153,7 @@ function startMusic() {
   music.play().catch(() => {});
 }
 
-/* NAVIGATION */
+/* NAV */
 function startSoft() {
   startMusic();
   homeScreen.style.display = "none";
@@ -169,15 +166,18 @@ function startChaos() {
   chaosScreen.style.display = "block";
 }
 
-/* SOFT MODE LOGIC — 4 NO IMAGES */
+/* SOFT MODE */
 const noImages = ["no.png", "no1.png", "no2.png", "no3.png"];
 let noCount = 0;
 
 softNo.addEventListener("click", () => {
-  const index = Math.min(noCount, noImages.length - 1);
-  softImage.src = noImages[index];
+  const idx = Math.min(noCount, noImages.length - 1);
+  softImage.src = noImages[idx];
   softImage.style.display = "block";
   noCount++;
+
+  softYes.style.transform = `scale(${1 + noCount * 0.15})`;
+  softNo.style.transform = `scale(${1 - noCount * 0.1})`;
 });
 
 softYes.addEventListener("click", () => {
@@ -191,26 +191,38 @@ softYes.addEventListener("click", () => {
 
   softImage.src = "yes.png";
   softImage.style.display = "block";
+
+  softQuestion.innerHTML = `
+    YAYYYY 😍💞<br><br>
+    You just made me the happiest person 💐<br><br>
+    <strong>PS - I made this website myself!!!! 😤💻</strong><br>
+    Now enjoy your trip 🌍✈️
+  `;
+
   celebrate();
 });
 
 /* CHAOS MODE */
-chaosNo.addEventListener("mouseenter", moveNo);
-chaosNo.addEventListener("click", moveNo);
-
-function moveNo() {
-  chaosNo.style.left = Math.random() * 60 + "%";
-  chaosNo.style.top = Math.random() * 40 + "px";
+function moveNoAnywhere() {
+  chaosNo.style.position = "fixed";
+  const maxX = window.innerWidth - 80;
+  const maxY = window.innerHeight - 80;
+  chaosNo.style.left = Math.random() * maxX + "px";
+  chaosNo.style.top = Math.random() * maxY + "px";
 }
 
+chaosNo.addEventListener("touchstart", moveNoAnywhere);
+chaosNo.addEventListener("click", moveNoAnywhere);
+
 chaosYes.addEventListener("click", () => {
-  startMusic();
   celebrate();
 });
 
-/* BACK TO HOME */
+/* BACK */
 function goBack() {
   noCount = 0;
+  softYes.style.transform = "scale(1)";
+  softNo.style.transform = "scale(1)";
   softImage.style.display = "none";
   softQuestion.innerHTML =
     "Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖";
@@ -218,11 +230,11 @@ function goBack() {
   homeScreen.style.display = "block";
 }
 
-/* CONFETTI + FLOATING HEARTS & SUNFLOWERS */
+/* CONFETTI */
 function createFloat(crazy = false) {
   const item = document.createElement("div");
   item.classList.add("float");
-  item.textContent = ["💖", "🌻", "🎉"][Math.floor(Math.random() * 3)];
+  item.textContent = ["💖","🌻","🎉"][Math.floor(Math.random()*3)];
   item.style.left = Math.random() * 100 + "vw";
   item.style.animationDuration = crazy ? "2s" : "6s";
   item.style.fontSize = crazy ? "30px" : "18px";
