@@ -116,8 +116,8 @@
   const img = document.getElementById("reactionImage");
 
   // 🔗 ADD YOUR GOOGLE DRIVE IMAGE LINKS HERE
-  const noImage = "PASTE_NO_IMAGE_LINK_HERE";
-  const yesImage = "PASTE_YES_IMAGE_LINK_HERE";
+const noImage = "no.png";
+const yesImage = "yes.png";
 
   const noTexts = [
     "Are you sure? 🤨",
