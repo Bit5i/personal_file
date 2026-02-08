@@ -231,18 +231,42 @@ softYes.addEventListener("click", () => {
 /* CHAOS MODE */
 function moveNoAnywhere() {
   chaosNo.style.position = "fixed";
-  chaosNo.style.left = Math.random() * (window.innerWidth - 80) + "px";
-  chaosNo.style.top = Math.random() * (window.innerHeight - 80) + "px";
+
+  const padding = 100;
+  const maxX = window.innerWidth - padding;
+  const maxY = window.innerHeight - padding;
+
+  chaosNo.style.left = Math.random() * maxX + "px";
+  chaosNo.style.top = Math.random() * maxY + "px";
 }
 
-chaosNo.addEventListener("touchstart", moveNoAnywhere);
-chaosNo.addEventListener("click", moveNoAnywhere);
+
+chaosNo.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  temporarilyDisableYes();
+  moveNoAnywhere();
+});
+
+ chaosNo.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+});
+
+
+ function temporarilyDisableYes() {
+  chaosYes.style.pointerEvents = "none";
+  setTimeout(() => {
+    chaosYes.style.pointerEvents = "auto";
+  }, 300);
+}
+
 
 chaosYes.addEventListener("click", () => {
+  startMusic();
   chaosButtons.style.display = "none";
 
   chaosQuestion.innerHTML = `
-    
     YAYYYY 😍💞<br><br>
     You anyways had no option🥹🌻<br><br>
     <strong>PS - I love you💞 </strong><br>
@@ -251,6 +275,13 @@ chaosYes.addEventListener("click", () => {
 
   celebrate();
 });
+
+
+ chaosNo.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+});
+
 
 /* BACK */
 function goBack() {
