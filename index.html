@@ -77,17 +77,15 @@
   }
 
   .float {
-    position: absolute;
-    bottom: -30px;
+    position: fixed;
     animation: floatUp linear infinite;
     opacity: 0.9;
     z-index: 1;
   }
 
   @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 0; }
-    10% { opacity: 1; }
-    100% { transform: translateY(-120vh) scale(1.4); opacity: 0; }
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
   }
 </style>
 </head>
@@ -114,7 +112,7 @@
   <h1 id="softQuestion">
     Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖
   </h1>
-  <div class="buttons">
+  <div class="buttons" id="softButtons">
     <button class="yes" id="softYes">Yes 💘</button>
     <button class="no" id="softNo">No 🙄</button>
   </div>
@@ -122,8 +120,8 @@
 
 <!-- CHAOS MODE -->
 <div class="container" id="chaosScreen" style="display:none;">
-  <h1>Rutuja, will you be my Valentine? 😈💖</h1>
-  <div class="buttons">
+  <h1 id="chaosQuestion">Rutuja, will you be my Valentine? 😈💖</h1>
+  <div class="buttons" id="chaosButtons">
     <button class="yes" id="chaosYes">Yes 💘</button>
     <button class="no" id="chaosNo">No 🙄</button>
   </div>
@@ -139,9 +137,12 @@ const softYes = document.getElementById("softYes");
 const softNo = document.getElementById("softNo");
 const softImage = document.getElementById("softImage");
 const softQuestion = document.getElementById("softQuestion");
+const softButtons = document.getElementById("softButtons");
 
 const chaosYes = document.getElementById("chaosYes");
 const chaosNo = document.getElementById("chaosNo");
+const chaosQuestion = document.getElementById("chaosQuestion");
+const chaosButtons = document.getElementById("chaosButtons");
 
 const music = document.getElementById("bgMusic");
 
@@ -166,22 +167,40 @@ function startChaos() {
   chaosScreen.style.display = "block";
 }
 
-/* SOFT MODE */
+/* SOFT MODE LOGIC */
 const noImages = ["no.png", "no1.png", "no2.png", "no3.png"];
-let noCount = 0;
+const noTexts = [
+  "Are you sure? 🤨",
+  "Like… REALLY sure? 😐",
+  "Pcchhhh 😭",
+  "Huhhhhh 😤",
+  "One last time 😢"
+];
+
+let noClickCount = 0;
 
 softNo.addEventListener("click", () => {
-  const idx = Math.min(noCount, noImages.length - 1);
-  softImage.src = noImages[idx];
-  softImage.style.display = "block";
-  noCount++;
+  if (noClickCount < noTexts.length) {
+    softQuestion.textContent = noTexts[noClickCount];
 
-  softYes.style.transform = `scale(${1 + noCount * 0.15})`;
-  softNo.style.transform = `scale(${1 - noCount * 0.1})`;
+    const imgIndex = Math.min(noClickCount, noImages.length - 1);
+    softImage.src = noImages[imgIndex];
+    softImage.style.display = "block";
+
+    noClickCount++;
+
+    softYes.style.transform = `scale(${1 + noClickCount * 0.15})`;
+    softNo.style.transform = `scale(${1 - noClickCount * 0.1})`;
+  }
+
+  if (noClickCount === noTexts.length) {
+    softNo.style.display = "none";
+    softQuestion.textContent = "Yeah… you don’t really have a choice 😌💗";
+  }
 });
 
 softYes.addEventListener("click", () => {
-  if (noCount === 0) {
+  if (noClickCount === 0) {
     softQuestion.innerHTML = `
       Start la bhaav nahi khalis aata tri bhaav khaa 😌<br><br>
       <button onclick="goBack()">Back to main question</button>
@@ -189,6 +208,7 @@ softYes.addEventListener("click", () => {
     return;
   }
 
+  softButtons.style.display = "none";
   softImage.src = "yes.png";
   softImage.style.display = "block";
 
@@ -205,48 +225,57 @@ softYes.addEventListener("click", () => {
 /* CHAOS MODE */
 function moveNoAnywhere() {
   chaosNo.style.position = "fixed";
-  const maxX = window.innerWidth - 80;
-  const maxY = window.innerHeight - 80;
-  chaosNo.style.left = Math.random() * maxX + "px";
-  chaosNo.style.top = Math.random() * maxY + "px";
+  chaosNo.style.left = Math.random() * (window.innerWidth - 80) + "px";
+  chaosNo.style.top = Math.random() * (window.innerHeight - 80) + "px";
 }
 
 chaosNo.addEventListener("touchstart", moveNoAnywhere);
 chaosNo.addEventListener("click", moveNoAnywhere);
 
 chaosYes.addEventListener("click", () => {
+  chaosButtons.style.display = "none";
+
+  chaosQuestion.innerHTML = `
+    YAYYYY 😍💞<br><br>
+    You just made me the happiest person 💐<br><br>
+    <strong>PS - I made this website myself!!!! 😤💻</strong><br>
+    Now enjoy your trip 🌍✈️
+  `;
+
   celebrate();
 });
 
 /* BACK */
 function goBack() {
-  noCount = 0;
+  noClickCount = 0;
   softYes.style.transform = "scale(1)";
   softNo.style.transform = "scale(1)";
+  softNo.style.display = "block";
   softImage.style.display = "none";
-  softQuestion.innerHTML =
+  softQuestion.textContent =
     "Rutuja, you’re already my girlfriend, but will you be my Valentine? 💖";
   softScreen.style.display = "none";
   homeScreen.style.display = "block";
 }
 
-/* CONFETTI */
-function createFloat(crazy = false) {
+/* CONFETTI EVERYWHERE */
+function createFloat() {
   const item = document.createElement("div");
   item.classList.add("float");
   item.textContent = ["💖","🌻","🎉"][Math.floor(Math.random()*3)];
-  item.style.left = Math.random() * 100 + "vw";
-  item.style.animationDuration = crazy ? "2s" : "6s";
-  item.style.fontSize = crazy ? "30px" : "18px";
+
+  item.style.left = Math.random() * window.innerWidth + "px";
+  item.style.top = Math.random() * window.innerHeight + "px";
+  item.style.fontSize = Math.random() * 20 + 20 + "px";
+  item.style.animationDuration = Math.random() * 2 + 2 + "s";
+
   document.body.appendChild(item);
   setTimeout(() => item.remove(), 4000);
 }
 
 function celebrate() {
-  for (let i = 0; i < 120; i++) createFloat(true);
+  for (let i = 0; i < 120; i++) createFloat();
 }
-
-setInterval(() => createFloat(false), 400);
 </script>
 
 </body>
