@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentine?</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: "Comic Sans MS", "Poppins", sans-serif;
+  }
+
+  body {
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(180deg, #ff9a9e, #fad0c4);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 380px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 2;
+  }
+
+  img {
+    width: 100%;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    display: none;
+  }
+
+  h1 {
+    font-size: 1.35rem;
+    color: #e60073;
+    margin-bottom: 20px;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  button {
+    flex: 1;
+    padding: 14px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  #yesBtn {
+    background: #ff4d6d;
+    color: white;
+  }
+
+  #noBtn {
+    background: #ccc;
+    color: #333;
+  }
+
+  .float {
+    position: absolute;
+    bottom: -30px;
+    animation: floatUp linear infinite;
+    opacity: 0.9;
+    z-index: 1;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0;
+    }
+    10% { opacity: 1; }
+    100% {
+      transform: translateY(-120vh) scale(1.4);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- IMAGE SLOT -->
+  <img id="reactionImage" alt="reaction image" />
+
+  <h1 id="question">
+    Rutuja you already is my girlfriend still will you be my Valentine? 💖
+  </h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes 💘</button>
+    <button id="noBtn">No 🙄</button>
+  </div>
+</div>
+
+<script>
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+  const question = document.getElementById("question");
+  const img = document.getElementById("reactionImage");
+
+  // 🔗 ADD YOUR GOOGLE DRIVE IMAGE LINKS HERE
+  const noImage = "PASTE_NO_IMAGE_LINK_HERE";
+  const yesImage = "PASTE_YES_IMAGE_LINK_HERE";
+
+  const noTexts = [
+    "Are you sure? 🤨",
+    "Like… REALLY sure? 😐",
+    "Bro think again 😭",
+    "Last chance fr 😤",
+    "I’m gonna cry 😢",
+    "Okay this button is exhausted 😮‍💨"
+  ];
+
+  let noClickCount = 0;
+
+  noBtn.addEventListener("click", () => {
+    if (noClickCount === 0) {
+      img.src = noImage;
+      img.style.display = "block";
+    }
+
+    if (noClickCount < noTexts.length) {
+      question.textContent = noTexts[noClickCount];
+      noClickCount++;
+
+      yesBtn.style.transform = `scale(${1 + noClickCount * 0.15})`;
+      noBtn.style.transform = `scale(${1 - noClickCount * 0.1})`;
+    }
+
+    if (noClickCount >= noTexts.length) {
+      noBtn.style.display = "none";
+      question.textContent = "Yeah… you don’t really have a choice 😌💗";
+    }
+  });
+
+  yesBtn.addEventListener("click", () => {
+    img.src = yesImage;
+    img.style.display = "block";
+
+    question.innerHTML = `
+      YAYYYY 😍💞<br><br>
+      You just made me the happiest person 💐<br><br>
+      <strong>PS - I made this website myself!!!! 😤💻</strong><br>
+      Now enjoy your trip 🌍✈️
+    `;
+
+    noBtn.style.display = "none";
+    yesBtn.style.display = "none";
+  });
+
+  function createFloat() {
+    const item = document.createElement("div");
+    item.classList.add("float");
+
+    const emojis = ["💖", "🌻"];
+    item.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    item.style.left = Math.random() * 100 + "vw";
+    item.style.animationDuration = Math.random() * 3 + 4 + "s";
+    item.style.fontSize = Math.random() * 18 + 16 + "px";
+
+    document.body.appendChild(item);
+
+    setTimeout(() => item.remove(), 8000);
+  }
+
+  setInterval(createFloat, 250);
+</script>
+
+</body>
+</html>
